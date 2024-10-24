@@ -25,10 +25,14 @@
 
 ## 功能演示
 
+   ![web界面](/screenshots/screenshot.png)
+
 1. **访问主页**：
    打开浏览器访问 `http://localhost:5000`，如果在远程服务器上运行，可修改 `localhost` 为服务器 IP 地址，端口不变。
 
-   ![web界面](/screenshots/screenshot.png)
+   ![演示](/screenshots/demo4.jpeg)
+
+   第一步：输入最后一个视频播放列表的 URL，并填写输出目录，比如“夜幕下的哈尔滨”，第二步：点击显示构造按钮，检查自动获取的数据是否正常，第三步：如无错误，则点击开始下载，下载开始。
 
 2. **输入视频 URL**：
    在表单中输入 BiliBili 视频的 URL，例如：`https://www.bilibili.com/video/BV1LTyaYeE3v?p=75?session_from=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1LTyaYeE3v%3Fp%3D75`。
