@@ -30,14 +30,15 @@
    ![web界面](/screenshots/screenshot.png)
 
 2. **输入视频 URL**：
-   在表单中输入 BiliBili 视频的 URL，例如：https://www.bilibili.com/video/BV1LTyaYeE3v?p=75?session_from=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1LTyaYeE3v%3Fp%3D75。
+   在表单中输入 BiliBili 视频的 URL，例如：`https://www.bilibili.com/video/BV1LTyaYeE3v?p=75?session_from=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1LTyaYeE3v%3Fp%3D75`。
+
    ![哔哩哔哩视频 URL](/screenshots/demo1.jpeg)
 
 3. **选择输出目录**：
-   输入音频文件保存位置，默认为 `/mnt/shares/audiobooks/Your_Directory`,Your_Directory 为你自己指定的目录名，比如：当你填入“夜幕下的哈尔滨”时，实际保存路径为 `/mnt/shares/audiobooks/夜幕下的哈尔滨`。
+   输入音频文件保存位置，默认为 `/mnt/shares/audiobooks/Your_Directory`,`Your_Directory` 为你自己指定的目录名，比如：当你填入“夜幕下的哈尔滨”时，实际保存路径为 `/mnt/shares/audiobooks/夜幕下的哈尔滨`。
 
 4. **选择循环次数**：
-   本脚本以遍历的方法下载整本有声书，所以需要提供循环次数，即该有声书选集数，可从URL中自动识别，若无法识别，可手动输入，建议取有声书最后一个选集的网址填入，例如：https://www.bilibili.com/video/BV1LTyaYeE3v?p=75，则脚本会自动获取该有声书的选集数，自动填入循环次数为 75，同时如果下载失败，会重试3次，且已经下载过的不会再次下载。
+   本脚本以遍历的方法下载整本有声书，所以需要提供循环次数，即该有声书选集数，可从URL中自动识别，若无法识别，可手动输入，建议取有声书最后一个选集的网址填入，例如：`https://www.bilibili.com/video/BV1LTyaYeE3v?p=75`，则脚本会自动获取该有声书的选集数，自动填入循环次数为 75，同时如果下载失败，会重试3次，且已经下载过的不会再次下载。
 
    ![选集数](/screenshots/demo2.jpeg)
 
@@ -56,4 +57,5 @@
 - 请确保你有权下载相关音频文件，并遵守 BiliBili 的使用条款。
 - 此工具仅用于学习和研究目的，请勿用于非法用途。
 - 建议搭配 alist 使用，可以自动生成播放列表。
+
 ![alist演示](/screenshots/demo3.jpeg)
