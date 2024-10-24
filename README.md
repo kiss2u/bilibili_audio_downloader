@@ -27,6 +27,7 @@
 
 1. **访问主页**：
    打开浏览器访问 `http://localhost:5000`，如果在远程服务器上运行，可修改 `localhost` 为服务器 IP 地址，端口不变。
+   
    ![web界面](/screenshots/screenshot.png)
 
 2. **输入视频 URL**：
