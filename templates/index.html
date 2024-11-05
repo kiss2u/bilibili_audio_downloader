@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BiliBili Audio Downloader</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>BiliBili Audio Downloader</h1>
+    <form id="downloadForm">
+        <label for="url">视频URL:</label><br>
+        <input type="text" id="url" name="url"><br>
+        <label for="output_dir">输出目录:</label><br>
+        <input type="text" id="output_dir" name="output_dir"><br>
+        <label for="number">循环次数:</label><br>
+        <input type="number" id="number" name="number" value="1"><br>
+        <label for="check">是否保留原名:</label><br>
+        <input type="checkbox" id="check" name="check"><br>
+        <button type="button" onclick="startDownload()">开始下载</button>
+        <button type="button" onclick="showConstructedUrlAndNumber()">显示构造</button>
+    </form>
+    <div id="results"></div>
+    <div id="constructedInfo" style="display:none;">
+        <p>构造的新网址: <span id="constructedUrl"></span></p>
+        <p>循环次数: <span id="constructedNumber"></span></p>
+        <p>输出目录: <span id="constructedOutputDir"></span></p>
+        <p>保留原名: <span id="constructedCheck"></span></p>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
