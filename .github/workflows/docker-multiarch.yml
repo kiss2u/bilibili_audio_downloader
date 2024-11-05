@@ -39,5 +39,6 @@ jobs:
         file: ./Dockerfile
         platforms: ${{ matrix.platform }}
         tags: |
+          ${{ secrets.DOCKER_USERNAME }}/bilibili-audio-downloader:latest
           ${{ secrets.DOCKER_USERNAME }}/bilibili-audio-downloader:${{ matrix.tag }}
         push: true
