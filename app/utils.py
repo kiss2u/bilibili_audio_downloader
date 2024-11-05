@@ -43,35 +43,11 @@ def download_audio(ws, url, output_dir, number, check=False, max_retries=3):
         try:
             with YoutubeDL(ydl_opts) as ydl:
                 info_dict = ydl.extract_info(url, download=True)
-            actual_filename = os.path.basename(info_dict['requested_downloads'][0]['filepath'])
-            ws.send(f"音频已下载到'{new_output_dir}'目录下，并以'{actual_filename}'命名。")
+            actual_filename = os.path.basename(info_dict['requested'])
+            ws.send(f"Download completed: {actual_filename}")
             break
         except Exception as e:
-            if retries < max_retries:
-                retries += 1
-                logging.info(f"下载失败，正在进行第{retries}/{max_retries}次重试...")
-            else:
-                ws.send("下载失败，请检查URL和网络连接。")
-                raise e
-
-class CustomLogger:
-    def __init__(self, ws=None):
-        self.ws = ws
-
-    def debug(self, msg):
-        logging.debug(msg)
-
-    def warning(self, msg):
-        logging.warning(msg)
-
-    def error(self, msg):
-        logging.error(msg)
-
-def progress_hook(ws, d):
-    if d['status'] == 'downloading':
-        percent = d['_percent_str'].replace('%', '')
-        try:
-            ws.send(f"Downloading: {percent}%")
-        except WebSocketError:
-            pass
-        sys.stdout.flush()
+            ws.send(f"Error: {str(e)}")
+            retries += 1
+    else:
+        ws.send("Max retries exceeded. Download failed.")
