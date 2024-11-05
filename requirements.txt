@@ -1,0 +1,6 @@
+Flask
+flask-sockets
+gevent
+gevent-websocket
+yt-dlp
+websocket-client
