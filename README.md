@@ -22,6 +22,39 @@
    ```bash
    python bilibili_audio_downloader.py
    ```
+## 更新 docker 使用
+
+1. 对于 x86_64 架构：
+
+   ```bash
+   docker pull nbzzd6/bilibili-audio-downloader:latest
+   docker run -d -p 8080:8080 -v ./path_to_your_volume:/mnt/shares/audiobooks nbzzd6/bilibili-audio-downloader:latest
+   ```
+2. 对于 ARM64 架构：
+
+   ```bash
+   docker pull nbzzd6/bilibili-audio-downloader:latest
+   docker run -d -p 8080:8080 -v ./path_to_your_volume:/mnt/shares/audiobooks --platform linux/arm64 nbzzd6/bilibili-audio-downloader:latest
+   ```
+3. 使用 Docker Compose
+
+   如果你希望使用 Docker Compose 来管理多个服务，可以创建一个 docker-compose.yml 文件：
+
+   ```yaml
+   version: '3.8'
+   services:
+     web:
+      image: nbzzd6/bilibili-audio-downloader:latest
+      platform: linux/amd64  # 或者 linux/arm64
+      ports:
+        - "8080:8080"
+      volumes:
+        - ./path_to_your_volume:/mnt/shares/audiobooks  # 卷映射
+      environment:
+        - FLASK_APP=run.py
+        - FLASK_RUN_HOST=0.0.0.0
+        - FLASK_RUN_PORT=8080
+   ```
 
 ## 功能演示
 
