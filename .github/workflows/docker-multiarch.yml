@@ -35,4 +35,4 @@ jobs:
         file: ./Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: your-dockerhub-username/bilibili-audio-downloader:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/bilibili-audio-downloader:latest
