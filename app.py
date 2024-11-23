@@ -1,5 +1,4 @@
-from flask import Flask, request, jsonify
-from flask_socketio import SocketIO, emit
+from flask import Flask, request, jsonify, render_template_string
 from yt_dlp import YoutubeDL
 import os
 import re
@@ -7,16 +6,11 @@ import logging
 import sys
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class CustomLogger:
-    def __init__(self, sid):
-        self.sid = sid
-
     def debug(self, msg):
         logging.debug(msg)
 
@@ -26,16 +20,12 @@ class CustomLogger:
     def error(self, msg):
         logging.error(msg)
 
-    def info(self, msg):
-        socketio.emit('download_progress', {'message': msg}, room=self.sid)
-
-def progress_hook(d, sid):
+def progress_hook(d):
     if d['status'] == 'downloading':
-        message = f"\rDownloading: {d['_percent_str']} at {d['_speed_str']}"
-        socketio.emit('download_progress', {'message': message}, room=sid)
+        print(f"\rDownloading: {d['_percent_str']}", end="")
         sys.stdout.flush()
 
-def download_audio(url, output_dir, number, check=False, max_retries=3, sid=None):
+def download_audio(url, output_dir, number, check=False, max_retries=3):
     base_dir = "/mnt/shares/audiobooks/"
     new_output_dir = os.path.join(base_dir, output_dir)
     os.makedirs(new_output_dir, exist_ok=True)
@@ -67,8 +57,8 @@ def download_audio(url, output_dir, number, check=False, max_retries=3, sid=None
         'noplaylist': True,
         'ignoreerrors': True,
         'download_archive': os.path.join(new_output_dir, '.downloaded_videos.txt'),
-        'logger': CustomLogger(sid),
-        'progress_hooks': [lambda d: progress_hook(d, sid)],
+        'logger': CustomLogger(),
+        'progress_hooks': [progress_hook],
     }
 
     retries = 0
@@ -94,12 +84,11 @@ def download():
     output_dir = data.get('output_dir')
     number = int(data.get('number', 1))
     check = data.get('check', False)
-    sid = request.sid
 
     results = []
     for i in range(1, number + 1):
         url_with_param = f"{url}?p={i}"
-        result = download_audio(url_with_param, output_dir, i, check, sid=sid)
+        result = download_audio(url_with_param, output_dir, i, check)
         results.append(result)
         if "No such playlist" in result:
             break
@@ -108,7 +97,99 @@ def download():
 
 @app.route('/')
 def home():
-    return app.send_static_file('index.html')
+    return render_template_string("""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>BiliBili Audio Downloader</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        <h1>BiliBili Audio Downloader</h1>
+        <form id="downloadForm">
+            <label for="url">视频URL:</label><br>
+            <input type="text" id="url" name="url"><br>
+            <label for="output_dir">输出目录:</label><br>
+            <input type="text" id="output_dir" name="output_dir"><br>
+            <label for="number">循环次数:</label><br>
+            <input type="number" id="number" name="number" value="1"><br>
+            <label for="check">是否保留原名:</label><br>
+            <input type="checkbox" id="check" name="check"><br>
+            <button type="button" onclick="startDownload()">开始下载</button>
+            <button type="button" onclick="showConstructedUrlAndNumber()">显示构造</button>
+        </form>
+        <div id="results"></div>
+        <div id="constructedInfo" style="display:none;">
+            <p>构造的新网址: <span id="constructedUrl"></span></p>
+            <p>循环次数: <span id="constructedNumber"></span></p>
+            <p>输出目录: <span id="constructedOutputDir"></span></p>
+            <p>保留原名: <span id="constructedCheck"></span></p>
+        </div>
+
+        <script>
+            function startDownload() {
+                var url = $('#url').val();
+                var output_dir = $('#output_dir').val();
+                var number = parseInt($('#number').val(), 10);
+                var check = $('#check').is(':checked');
+
+                // 解析URL以获取BVid
+                var parsedUrl = new URL(url);
+                var pathParts = parsedUrl.pathname.split('/');
+                var BVid = pathParts[2];
+                var newUrl = `https://www.bilibili.com/video/${BVid}`;
+                $('#constructedUrl').text(newUrl);  // 显示构造的新网址
+
+                // 从查询字符串中获取page
+                var searchParams = new URLSearchParams(parsedUrl.search);
+                var pageFromUrl = searchParams.get('p');
+                if (pageFromUrl && !isNaN(pageFromUrl)) {
+                    $('#number').val(pageFromUrl);  // 使用从URL中提取的page作为number
+                    number = parseInt(pageFromUrl, 10);  // 更新number变量
+                }
+
+                $.ajax({
+                    url: '/download',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({url: newUrl, output_dir: output_dir, number: number, check: check}),
+                    success: function(response) {
+                        $('#results').empty();
+                        response.forEach(function(result) {
+                            $('#results').append('<p>' + result + '</p>');
+                        });
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });
+            }
+
+            function showConstructedUrlAndNumber() {
+                var url = $('#url').val();
+                var number = parseInt($('#number').val(), 10);
+                var output_dir = $('#output_dir').val();
+                var check = $('#check').is(':checked');
+
+                // 解析URL以获取BVid
+                var parsedUrl = new URL(url);
+                var pathParts = parsedUrl.pathname.split('/');
+                var BVid = pathParts[2];
+                var newUrl = `https://www.bilibili.com/video/${BVid}`;
+
+                // 显示构造的新网址、循环次数和输出目录
+                $('#constructedUrl').text(newUrl);
+                $('#constructedNumber').text(!isNaN(number) ? number : "用户给定的数字");
+                $('#constructedOutputDir').text(output_dir);
+                $('#constructedCheck').text(check ? '已启用' : '未启用');
+
+                $('#constructedInfo').css('display', 'block');
+            }
+        </script>
+    </body>
+    </html>
+    """)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', debug=True)
