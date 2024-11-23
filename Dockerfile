@@ -4,10 +4,14 @@ FROM python:3.9-slim
 # 设置工作目录
 WORKDIR /app
 
+# 安装 git
+RUN apt-get update && apt-get install -y git
+
 # 复制当前目录的内容到工作目录
 COPY . /app
 
-# 安装所需的依赖项
+# 更新 pip 并安装依赖
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 暴露端口
