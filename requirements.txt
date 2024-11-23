@@ -3,3 +3,4 @@ Werkzeug==2.0.2
 yt-dlp
 click>=7.1.2
 itsdangerous>=2.0
+Jinja2>=3.0
