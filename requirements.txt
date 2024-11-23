@@ -1,2 +1,3 @@
 Flask==2.0.2
-git+https://github.com/yt-dlp/yt-dlp.git
+Werkzeug==2.0.2
+yt-dlp
