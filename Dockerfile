@@ -1,11 +1,11 @@
 # 第一阶段：构建阶段
-FROM python:3.9-alpine AS builder
+FROM python:3.9-slim AS builder
 
 # 设置工作目录
 WORKDIR /app
 
 # 安装 git 和其他必要的工具
-RUN apk add --no-cache git build-base
+RUN apt-get update && apt-get install -y git build-essential
 
 # 复制当前目录下的所有文件到容器的工作目录
 COPY . /app
@@ -15,7 +15,7 @@ RUN pip install --upgrade pip
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
 
 # 第二阶段：运行阶段
-FROM python:3.9-alpine
+FROM python:3.9-slim
 
 # 设置工作目录
 WORKDIR /app
