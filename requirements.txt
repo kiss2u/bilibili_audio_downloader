@@ -1,2 +1,2 @@
 Flask==2.0.2
-yt-dlp==2021.12.2
+git+https://github.com/yt-dlp/yt-dlp.git
