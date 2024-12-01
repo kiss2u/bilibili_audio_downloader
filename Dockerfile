@@ -17,6 +17,9 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.t
 # 第二阶段：运行阶段
 FROM python:3.9-slim
 
+# 安装 git
+RUN apt-get update && apt-get install -y git
+
 # 设置工作目录
 WORKDIR /app
 
