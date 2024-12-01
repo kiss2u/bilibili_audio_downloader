@@ -5,7 +5,9 @@ FROM python:3.9-slim AS builder
 WORKDIR /app
 
 # 安装 git 和其他必要的工具
-RUN apt-get update && apt-get install -y git build-essential
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git build-essential && \
+    rm -rf /var/lib/apt/lists/*
 
 # 复制当前目录下的所有文件到容器的工作目录
 COPY . /app
@@ -18,7 +20,9 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.t
 FROM python:3.9-slim
 
 # 安装 git
-RUN apt-get update && apt-get install -y git
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git && \
+    rm -rf /var/lib/apt/lists/*
 
 # 设置工作目录
 WORKDIR /app
