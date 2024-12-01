@@ -20,6 +20,9 @@ FROM python:3.9-slim
 # 设置工作目录
 WORKDIR /app
 
+# 安装 git
+RUN apt-get update && apt-get install -y git
+
 # 安装依赖
 COPY --from=builder /app/wheels /wheels
 COPY --from=builder /app/requirements.txt /app/
