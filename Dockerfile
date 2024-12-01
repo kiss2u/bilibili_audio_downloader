@@ -14,6 +14,7 @@ COPY . /app
 
 # 更新 pip 并安装依赖
 RUN pip install --upgrade pip
+RUN pip install --upgrade "yt-dlp @ git+https://github.com/yt-dlp/yt-dlp.git"
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
 
 # 第二阶段：运行阶段
