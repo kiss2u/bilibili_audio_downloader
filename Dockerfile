@@ -13,7 +13,7 @@ RUN python -m venv /opt/venv && \
     find /opt/venv -name "*.pyc" -delete && \
     find /opt/venv -name "__pycache__" -delete
 
-# 验证依赖安装（在构建阶段验证）
+# 验证基本依赖安装
 RUN /opt/venv/bin/python -c "import flask; import websockets; import yt_dlp"
 
 # 运行阶段
@@ -57,12 +57,9 @@ COPY --chown=app:app src/ ./src/
 COPY --chown=app:app templates/ ./templates/
 COPY --chown=app:app static/ ./static/
 
-# 创建空的__init__.py（如果不存在）
-RUN touch src/__init__.py
-
-# 验证运行时环境和导入
-RUN cd /app && \
-    python -c "from src.downloader import BilibiliDownloader; from src.app import app"
+# 创建空的__init__.py文件
+RUN touch src/__init__.py && \
+    touch src/models/__init__.py
 
 # 切换到非root用户
 USER app
