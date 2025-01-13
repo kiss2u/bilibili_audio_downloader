@@ -1,24 +1,40 @@
 import asyncio
-import websockets
 import json
-from typing import Dict
+import logging
+import websockets
 
-# WebSocket连接存储
-websocket_connections: Dict[str, websockets.WebSocketServerProtocol] = {}
+# 配置日志
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-async def handle_websocket(websocket, path):
-    """处理WebSocket连接"""
+# 存储所有连接的客户端
+CLIENTS = set()
+
+async def register(websocket):
+    CLIENTS.add(websocket)
     try:
-        async for message in websocket:
-            await websocket.send(message)
-    except websockets.ConnectionClosed:
-        pass
+        await websocket.wait_closed()
+    finally:
+        CLIENTS.remove(websocket)
 
-async def start_websocket_server():
-    """启动WebSocket服务器"""
-    async with websockets.serve(handle_websocket, "localhost", 8765):
-        await asyncio.Future()  # 永久运行
+async def broadcast_message(message):
+    if CLIENTS:
+        await asyncio.gather(
+            *[client.send(json.dumps(message)) for client in CLIENTS]
+        )
 
-def run_websocket_server():
-    """运行WebSocket服务器的入口点"""
-    asyncio.run(start_websocket_server()) 
+async def websocket_handler(websocket, path):
+    logger.info(f"New client connected from {websocket.remote_address}")
+    await register(websocket)
+
+async def start_server():
+    logger.info("Starting WebSocket server...")
+    async with websockets.serve(websocket_handler, "0.0.0.0", 8765):
+        await asyncio.Future()  # 运行直到被取消
+
+def run_server():
+    logger.info("Initializing WebSocket server...")
+    asyncio.run(start_server())
+
+if __name__ == "__main__":
+    run_server() 

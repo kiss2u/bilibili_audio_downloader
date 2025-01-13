@@ -72,7 +72,11 @@ def download():
         number = int(data.get('number', 1))
         check = data.get('check', False)
 
+        if not url or not output_dir:
+            return jsonify({"error": "URL和输出目录不能为空"}), 400
+
         if enqueue_task(url, output_dir, number, check):
+            # 启动下载进程
             def run_async():
                 try:
                     asyncio.run(downloader.process_queue())
@@ -81,14 +85,15 @@ def download():
                     logger.error(traceback.format_exc())
             
             thread = threading.Thread(target=run_async)
+            thread.daemon = True  # 设置为守护线程
             thread.start()
             
             return jsonify({"message": "任务已添加到队列，正在排队下载，请稍后查看进度。"})
-        return jsonify({"message": "任务添加到队列失败，请检查相关配置或稍后重试。"})
+        return jsonify({"error": "任务添加到队列失败，请检查相关配置或稍后重试。"}), 500
     except Exception as e:
         logger.error(f"Error in download route: {e}")
         logger.error(traceback.format_exc())
-        raise
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     logger.info("Running Flask app...")

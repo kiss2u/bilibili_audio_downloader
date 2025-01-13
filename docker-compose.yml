@@ -17,6 +17,8 @@ services:
       - FLASK_ENV=production
       - FLASK_APP=src.app:app
       - FLASK_DEBUG=1  # 添加调试模式
+      - WS_HOST=0.0.0.0  # 添加WebSocket主机
+      - WS_PORT=8765     # 添加WebSocket端口
     logging:
       driver: "json-file"
       options:

@@ -10,6 +10,12 @@ docker-entrypoint.sh text eol=lf
 Dockerfile text eol=lf
 docker-compose*.yml text eol=lf
 requirements.txt text eol=lf
+*.html text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+.gitattributes text eol=lf
+.dockerignore text eol=lf
 
 # 明确指定应该使用CRLF的文件
 *.bat text eol=crlf
