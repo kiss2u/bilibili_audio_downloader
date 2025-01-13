@@ -19,6 +19,11 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 COPY src/ ./src/
 COPY templates/ ./templates/
+
+# 创建static目录（如果不存在）
+RUN mkdir -p static/css
+
+# 复制static文件（如果存在）
 COPY static/ ./static/
 
 # 安装Python依赖
