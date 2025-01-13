@@ -1,7 +1,23 @@
 #!/bin/bash
-set -e
+set -ex  # 添加 -x 显示执行的命令
 
 cd /app
+
+echo "Current directory: $(pwd)"
+echo "Python path: $PYTHONPATH"
+echo "Virtual env: $VIRTUAL_ENV"
+echo "PATH: $PATH"
+
+echo "Checking Python installation..."
+which python3
+python3 --version
+
+echo "Checking installed packages..."
+pip list
+
+echo "Checking directory structure..."
+ls -la
+ls -la src/
 
 echo "Starting WebSocket server..."
 python3 -m src.websocket &

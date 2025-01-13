@@ -1,105 +1,29 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>BiliBili Audio Downloader</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
 <body>
     <h1>BiliBili Audio Downloader</h1>
     <form id="downloadForm">
-        <label for="url">视频URL:</label><br>
-        <input type="text" id="url" name="url"><br>
-        <label for="output_dir">输出目录:</label><br>
-        <input type="text" id="output_dir" name="output_dir"><br>
-        <label for="number">循环次数:</label><br>
-        <input type="number" id="number" name="number" value="1"><br>
-        <label for="check">是否保留原名:</label><br>
-        <input type="checkbox" id="check" name="check"><br>
-        <button type="button" onclick="startDownload()">开始下载</button>
-        <button type="button" onclick="showConstructedUrlAndNumber()">显示构造</button>
+        <div>
+            <label for="url">视频URL：</label>
+            <input type="text" id="url" name="url" required>
+        </div>
+        <div>
+            <label for="output_dir">输出目录：</label>
+            <input type="text" id="output_dir" name="output_dir" required>
+        </div>
+        <div>
+            <label for="number">下载数量：</label>
+            <input type="number" id="number" name="number" value="1" min="1">
+        </div>
+        <div>
+            <label for="check">仅检查：</label>
+            <input type="checkbox" id="check" name="check">
+        </div>
+        <button type="submit">开始下载</button>
     </form>
-    <div id="results"></div>
-    <div id="constructedInfo" style="display:none;">
-        <p>构造的新网址: <span id="constructedUrl"></span></p>
-        <p>循环次数: <span id="constructedNumber"></span></p>
-        <p>输出目录: <span id="constructedOutputDir"></span></p>
-        <p>保留原名: <span id="constructedCheck"></span></p>
-    </div>
-    <div id="progress" style="display:none;">
-        <p>下载进度: <span id="progressMessage"></span></p>
-    </div>
-
-    <script>
-        var socket = io();
-
-        function startDownload() {
-            var url = $('#url').val();
-            var output_dir = $('#output_dir').val();
-            var number = parseInt($('#number').val(), 10);
-            var check = $('#check').is(':checked');
-
-            // 解析URL以获取BVid
-            var parsedUrl = new URL(url);
-            var pathParts = parsedUrl.pathname.split('/');
-            var BVid = pathParts[2];
-            var newUrl = `https://www.bilibili.com/video/${BVid}`;
-            $('#constructedUrl').text(newUrl);  // 显示构造的新网址
-
-            // 从查询字符串中获取page
-            var searchParams = new URLSearchParams(parsedUrl.search);
-            var pageFromUrl = searchParams.get('p');
-            if (pageFromUrl && !isNaN(pageFromUrl)) {
-                $('#number').val(pageFromUrl);  // 使用从URL中提取的page作为number
-                number = parseInt(pageFromUrl, 10);  // 更新number变量
-            }
-
-            $('#progress').css('display', 'block');  // 显示进度条
-
-            $.ajax({
-                url: '/download',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({url: newUrl, output_dir: output_dir, number: number, check: check}),
-                success: function(response) {
-                    $('#results').empty();
-                    response.forEach(function(result) {
-                        $('#results').append('<p>' + result + '</p>');
-                    });
-                },
-                error: function(error) {
-                    console.error(error);
-                }
-            });
-        }
-
-        function showConstructedUrlAndNumber() {
-            var url = $('#url').val();
-            var number = parseInt($('#number').val(), 10);
-            var output_dir = $('#output_dir').val();
-            var check = $('#check').is(':checked');
-
-            // 解析URL以获取BVid
-            var parsedUrl = new URL(url);
-            var pathParts = parsedUrl.pathname.split('/');
-            var BVid = pathParts[2];
-            var newUrl = `https://www.bilibili.com/video/${BVid}`;
-
-            // 显示构造的新网址、循环次数和输出目录
-            $('#constructedUrl').text(newUrl);
-            $('#constructedNumber').text(!isNaN(number) ? number : "用户给定的数字");
-            $('#constructedOutputDir').text(output_dir);
-            $('#constructedCheck').text(check ? '已启用' : '未启用');
-
-            $('#constructedInfo').css('display', 'block');
-        }
-
-        // 接收下载进度信息
-        socket.on('download_progress', function(data) {
-            $('#progressMessage').text(data.message);
-        });
-    </script>
+    <div id="status"></div>
 </body>
 </html>
