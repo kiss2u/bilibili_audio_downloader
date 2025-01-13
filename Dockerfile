@@ -13,6 +13,9 @@ RUN python -m venv /opt/venv && \
     find /opt/venv -name "*.pyc" -delete && \
     find /opt/venv -name "__pycache__" -delete
 
+# 验证依赖安装（在构建阶段验证）
+RUN /opt/venv/bin/python -c "import flask; import websockets"
+
 # 运行阶段
 FROM debian:bookworm-slim
 
@@ -55,11 +58,6 @@ RUN mkdir -p /mnt/shares/audiobooks static/css && \
 COPY --chown=app:app src/ ./src/
 COPY --chown=app:app templates/ ./templates/
 COPY --chown=app:app static/ ./static/
-
-# 验证依赖安装
-RUN . /opt/venv/bin/activate && \
-    python3 -c "import flask; import websockets" || \
-    (echo "Dependencies not installed correctly" && exit 1)
 
 # 切换到非root用户
 USER app
