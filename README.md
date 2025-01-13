@@ -22,17 +22,17 @@
 
 ```bash
 # 拉取最新稳定版
-docker pull yourusername/bilibili-audio-downloader:latest
+docker pull nbzzd6/bilibili-audio-downloader:latest
 
 # 拉取开发版
-docker pull yourusername/bilibili-audio-downloader:latest-dev
+docker pull nbzzd6/bilibili-audio-downloader:latest-dev
 
 # 运行容器
 docker run -d \
     -p 5000:5000 \
     -p 8765:8765 \
     -v ./downloads:/mnt/shares/audiobooks \
-    yourusername/bilibili-audio-downloader:latest
+    nbzzd6/bilibili-audio-downloader:latest
 ```
 
 ### 使用 Docker Compose
