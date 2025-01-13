@@ -47,7 +47,7 @@ ENV VIRTUAL_ENV=/opt/venv \
     PYTHONDONTWRITEBYTECODE=1
 
 # 创建必要的目录和文件
-RUN mkdir -p /mnt/shares/audiobooks static/css src/models && \
+RUN mkdir -p /mnt/shares/audiobooks static/css src/models templates && \
     touch src/__init__.py src/models/__init__.py && \
     # 创建非root用户
     useradd -m -r -s /bin/bash app && \
@@ -57,6 +57,9 @@ RUN mkdir -p /mnt/shares/audiobooks static/css src/models && \
 COPY --chown=app:app src/ ./src/
 COPY --chown=app:app templates/ ./templates/
 COPY --chown=app:app static/ ./static/
+
+# 验证模板目录
+RUN ls -la templates/ || echo "Templates directory is empty"
 
 # 切换到非root用户
 USER app
