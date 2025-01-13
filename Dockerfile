@@ -17,7 +17,7 @@ RUN python -m venv /opt/venv && \
 FROM debian:bookworm-slim
 
 # 添加标签
-LABEL org.opencontainers.image.source="https://github.com/yourusername/bilibili_audio_downloader"
+LABEL org.opencontainers.image.source="https://github.com/kiss2u/bilibili_audio_downloader"
 LABEL org.opencontainers.image.description="Bilibili Audio Downloader"
 LABEL org.opencontainers.image.licenses="MIT"
 
@@ -29,6 +29,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3-minimal \
     python3-pip \
+    python3-venv \
     ffmpeg \
     curl \
     && rm -rf /var/lib/apt/lists/* && \
@@ -39,6 +40,7 @@ COPY --from=builder /opt/venv /opt/venv
 
 # 设置环境变量
 ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONPATH="/app" \
     PYTHONUNBUFFERED=1 \
     FLASK_ENV=production \
     PYTHONDONTWRITEBYTECODE=1
@@ -47,12 +49,15 @@ ENV PATH="/opt/venv/bin:$PATH" \
 RUN mkdir -p /mnt/shares/audiobooks static/css && \
     # 创建非root用户
     useradd -m -r -s /bin/bash app && \
-    chown -R app:app /app /mnt/shares/audiobooks
+    chown -R app:app /app /mnt/shares/audiobooks /opt/venv
 
 # 复制应用文件
 COPY --chown=app:app src/ ./src/
 COPY --chown=app:app templates/ ./templates/
 COPY --chown=app:app static/ ./static/
+
+# 验证依赖安装
+RUN /opt/venv/bin/python3 -c "import flask; import websockets"
 
 # 切换到非root用户
 USER app

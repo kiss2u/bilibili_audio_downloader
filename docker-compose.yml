@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   bilibili-downloader:
     image: nbzzd6/bilibili-audio-downloader:latest-dev
@@ -12,6 +10,7 @@ services:
     environment:
       - FLASK_ENV=production
       - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app
       - PATH=/opt/venv/bin:$PATH
     restart: unless-stopped
     healthcheck:
