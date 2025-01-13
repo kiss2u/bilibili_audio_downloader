@@ -1,5 +1,5 @@
 # 使用官方Python镜像作为基础镜像
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 # 添加标签
 LABEL org.opencontainers.image.source="https://github.com/yourusername/bilibili_audio_downloader"
