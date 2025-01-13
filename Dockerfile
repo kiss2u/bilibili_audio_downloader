@@ -57,7 +57,9 @@ COPY --chown=app:app templates/ ./templates/
 COPY --chown=app:app static/ ./static/
 
 # 验证依赖安装
-RUN /opt/venv/bin/python3 -c "import flask; import websockets"
+RUN . /opt/venv/bin/activate && \
+    python3 -c "import flask; import websockets" || \
+    (echo "Dependencies not installed correctly" && exit 1)
 
 # 切换到非root用户
 USER app
