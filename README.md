@@ -2,7 +2,7 @@
 # 哔哩哔哩有声下载助手
 
 [![Build Status](https://github.com/kiss2u/bilibili_audio_downloader/workflows/Build%20and%20Push%20Docker%20Image/badge.svg)](https://github.com/kiss2u/bilibili_audio_downloader/actions)
-[![Docker Pulls](https://img.shields.io/docker/pulls/yourusername/bilibili-audio-downloader.svg)](https://hub.docker.com/r/yourusername/bilibili-audio-downloader)
+[![Docker Pulls](https://img.shields.io/docker/pulls/nbzzd6/bilibili-audio-downloader.svg)](https://hub.docker.com/r/nbzzd6/bilibili-audio-downloader)
 
 基于 yt_dlp 的哔哩哔哩音频下载工具，支持Docker部署。支持批量下载、自动提取音频、进度显示等功能。
 
