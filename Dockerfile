@@ -46,11 +46,12 @@ ENV VIRTUAL_ENV=/opt/venv \
     FLASK_ENV=production \
     PYTHONDONTWRITEBYTECODE=1
 
+# 创建非root用户
+RUN useradd -m -r -s /bin/bash app
+
 # 创建必要的目录和文件
-RUN mkdir -p /app/templates /app/static/css /app/src/models && \
+RUN mkdir -p /app/templates /app/static/css /app/src/models /mnt/shares/audiobooks && \
     touch /app/src/__init__.py /app/src/models/__init__.py && \
-    # 创建非root用户
-    useradd -m -r -s /bin/bash app && \
     chown -R app:app /app /mnt/shares/audiobooks /opt/venv
 
 # 复制应用文件（注意顺序）
