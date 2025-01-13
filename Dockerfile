@@ -47,19 +47,26 @@ ENV VIRTUAL_ENV=/opt/venv \
     PYTHONDONTWRITEBYTECODE=1
 
 # 创建必要的目录和文件
-RUN mkdir -p /mnt/shares/audiobooks static/css src/models templates && \
-    touch src/__init__.py src/models/__init__.py && \
+RUN mkdir -p /app/templates /app/static/css /app/src/models && \
+    touch /app/src/__init__.py /app/src/models/__init__.py && \
     # 创建非root用户
     useradd -m -r -s /bin/bash app && \
     chown -R app:app /app /mnt/shares/audiobooks /opt/venv
 
-# 复制应用文件
-COPY --chown=app:app src/ ./src/
-COPY --chown=app:app templates/ ./templates/
-COPY --chown=app:app static/ ./static/
+# 复制应用文件（注意顺序）
+COPY --chown=app:app templates/ /app/templates/
+COPY --chown=app:app static/ /app/static/
+COPY --chown=app:app src/ /app/src/
 
-# 验证模板目录
-RUN ls -la templates/ || echo "Templates directory is empty"
+# 验证目录结构
+RUN echo "Checking directory structure:" && \
+    ls -la /app && \
+    echo "Checking templates:" && \
+    ls -la /app/templates/ && \
+    echo "Checking static:" && \
+    ls -la /app/static/ && \
+    echo "Checking src:" && \
+    ls -la /app/src/
 
 # 切换到非root用户
 USER app

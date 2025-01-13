@@ -7,6 +7,8 @@ services:
       - "8765:8765"  # WebSocket服务器
     volumes:
       - ./downloads:/mnt/shares/audiobooks
+      - ./templates:/app/templates  # 添加模板目录映射
+      - ./static:/app/static        # 添加静态文件目录映射
     environment:
       - VIRTUAL_ENV=/opt/venv
       - PATH=/opt/venv/bin:$PATH

@@ -23,7 +23,15 @@ logger.info("Starting application...")
 DOWNLOAD_DIR = os.getenv('DOWNLOAD_DIR', '/mnt/shares/audiobooks')
 logger.info(f"Download directory: {DOWNLOAD_DIR}")
 
-app = Flask(__name__)
+# 创建Flask应用，指定模板目录
+template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
+static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static'))
+logger.info(f"Template directory: {template_dir}")
+logger.info(f"Static directory: {static_dir}")
+
+app = Flask(__name__, 
+           template_folder=template_dir,
+           static_folder=static_dir)
 
 # 添加错误处理
 @app.errorhandler(Exception)
@@ -46,6 +54,7 @@ except Exception as e:
 def home():
     try:
         logger.info("Accessing home page")
+        logger.info(f"Available templates: {os.listdir(template_dir)}")
         return render_template('index.html')
     except Exception as e:
         logger.error(f"Error in home route: {e}")
