@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+venv/
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+logs/
+*.log
+
+# Downloads
+downloads/
+/mnt/shares/audiobooks/
+
+# Docker
+.docker/
+
+# Local development
+tests/
+local/
+*.local.* 

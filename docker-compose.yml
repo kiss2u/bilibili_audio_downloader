@@ -1,14 +1,21 @@
 version: '3.8'
 
 services:
-  web:
-    image: nbzzd6/bilibili-audio-downloader:latest
-    platform: linux/amd64  # 或者 linux/arm64
+  bilibili-downloader:
+    build: .
+    image: bilibili-audio-downloader
+    container_name: bilibili-downloader
     ports:
-      - "8080:8080"
+      - "5000:5000"  # Flask应用
+      - "8765:8765"  # WebSocket服务器
     volumes:
-      - ./path_to_your_volume:/mnt/shares/audiobooks  # 卷映射
+      - ./downloads:/mnt/shares/audiobooks
     environment:
-      - FLASK_APP=run.py
-      - FLASK_RUN_HOST=0.0.0.0
-      - FLASK_RUN_PORT=8080
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

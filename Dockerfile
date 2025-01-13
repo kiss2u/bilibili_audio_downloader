@@ -1,48 +1,46 @@
-# 第一阶段：构建阶段
-FROM python:3.9-slim AS builder
+# 使用官方Python镜像作为基础镜像
+FROM python:3.12-slim
+
+# 添加标签
+LABEL org.opencontainers.image.source="https://github.com/yourusername/bilibili_audio_downloader"
+LABEL org.opencontainers.image.description="Bilibili Audio Downloader"
+LABEL org.opencontainers.image.licenses="MIT"
 
 # 设置工作目录
 WORKDIR /app
 
-# 安装 git 和其他必要的工具
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends git build-essential && \
-    rm -rf /var/lib/apt/lists/*
+# 安装系统依赖
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# 复制当前目录下的所有文件到容器的工作目录
-COPY . /app
+# 复制项目文件
+COPY requirements.txt .
+COPY src/ ./src/
+COPY templates/ ./templates/
+COPY static/ ./static/
 
-# 更新 pip 并安装依赖
-RUN pip install --upgrade pip
-RUN pip install --upgrade "yt-dlp @ git+https://github.com/yt-dlp/yt-dlp.git"
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
+# 安装Python依赖
+RUN pip install --no-cache-dir -r requirements.txt
 
-# 第二阶段：运行阶段
-FROM python:3.9-slim
-
-# 安装 git
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends git && \
-    rm -rf /var/lib/apt/lists/*
-
-# 设置工作目录
-WORKDIR /app
-
-# 安装依赖
-COPY --from=builder /app/wheels /wheels
-COPY --from=builder /app/requirements.txt /app/
-RUN pip install --no-cache-dir --no-index --find-links=/wheels -r requirements.txt
-
-# 复制应用代码
-COPY --from=builder /app/app.py /app/
-
-# 暴露端口
-EXPOSE 8080
+# 创建下载目录
+RUN mkdir -p /mnt/shares/audiobooks
 
 # 设置环境变量
-ENV FLASK_APP=app.py
+ENV PYTHONUNBUFFERED=1
 ENV FLASK_ENV=production
-ENV FLASK_RUN_PORT=8080
 
-# 运行 Flask 应用
-CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
+# 暴露端口
+EXPOSE 5000 8765
+
+# 添加健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:5000/ || exit 1
+
+# 复制启动脚本
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# 设置入口点
+ENTRYPOINT ["docker-entrypoint.sh"]
