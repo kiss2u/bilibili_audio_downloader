@@ -2,7 +2,8 @@ import os
 from flask import Flask, request, jsonify, render_template
 import threading
 import asyncio
-from .downloader import BilibiliDownloader
+import websockets
+from src.downloader import BilibiliDownloader
 from .models.queue import enqueue_task
 
 # 从环境变量获取配置

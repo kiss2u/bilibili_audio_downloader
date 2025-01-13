@@ -57,12 +57,15 @@ COPY --chown=app:app src/ ./src/
 COPY --chown=app:app templates/ ./templates/
 COPY --chown=app:app static/ ./static/
 
+# 创建空的__init__.py（如果不存在）
+RUN touch src/__init__.py
+
+# 验证运行时环境和导入
+RUN cd /app && \
+    python -c "from src.downloader import BilibiliDownloader; from src.app import app"
+
 # 切换到非root用户
 USER app
-
-# 验证运行时环境
-RUN python -c "import flask; import websockets; import yt_dlp" && \
-    python -c "from flask import Flask; from websockets import serve"
 
 # 暴露端口
 EXPOSE 5000 8765

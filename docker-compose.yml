@@ -13,6 +13,7 @@ services:
       - PYTHONPATH=/app
       - PYTHONUNBUFFERED=1
       - FLASK_ENV=production
+      - FLASK_APP=src.app:app
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000"]
