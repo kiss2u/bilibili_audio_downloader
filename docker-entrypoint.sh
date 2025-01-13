@@ -3,11 +3,13 @@ set -e
 
 cd /app
 
-# 启动WebSocket服务器
+echo "Starting WebSocket server..."
 python3 -m src.websocket &
 
 # 等待WebSocket服务器启动
 sleep 2
+echo "WebSocket server started"
 
-# 启动Flask应用
+echo "Starting Flask application..."
+# 使用 exec 确保进程正确接收信号
 exec python3 -m src.app 
