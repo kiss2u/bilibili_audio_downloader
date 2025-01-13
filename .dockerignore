@@ -1,17 +1,47 @@
+# 开发和测试文件
+tests/
+*.test.*
+*.local.*
 venv/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
-.env
-*.log
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Git相关
 .git/
 .gitignore
+.github/
+
+# 文档和其他
 README.md
-Dockerfile
-docker-compose.yml
+LICENSE
+*.md
+*.log
+docs/
+
+# IDE配置
+.idea/
+.vscode/
+*.sublime-*
+*.swp
+*.swo
+
+# 下载目录
 downloads/
-logs/
-tests/
-.pytest_cache/ 
+/mnt/
+
+# 缓存
+.cache/
+.npm/
+.yarn/
+node_modules/
+
+# 临时文件
+*.tmp
+*.temp
+*.bak
+.DS_Store 
