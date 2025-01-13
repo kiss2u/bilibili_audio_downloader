@@ -2,8 +2,7 @@ version: '3.8'
 
 services:
   bilibili-downloader:
-    build: .
-    image: nbzzd6/bilibili-audio-downloader
+    image: nbzzd6/bilibili-audio-downloader:latest-dev
     container_name: bilibili-downloader
     ports:
       - "5000:5000"  # Flask应用
