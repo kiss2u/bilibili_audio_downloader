@@ -14,10 +14,10 @@ RUN python -m venv /opt/venv && \
     find /opt/venv -name "__pycache__" -delete
 
 # 验证依赖安装（在构建阶段验证）
-RUN /opt/venv/bin/python -c "import flask; import websockets"
+RUN /opt/venv/bin/python -c "import flask; import websockets; import yt_dlp"
 
 # 运行阶段
-FROM debian:bookworm-slim
+FROM python:3.12-slim
 
 # 添加标签
 LABEL org.opencontainers.image.source="https://github.com/kiss2u/bilibili_audio_downloader"
@@ -30,9 +30,6 @@ WORKDIR /app
 # 安装运行时依赖
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    python3-minimal \
-    python3-pip \
-    python3-venv \
     ffmpeg \
     curl \
     && rm -rf /var/lib/apt/lists/* && \
@@ -42,8 +39,9 @@ RUN apt-get update && \
 COPY --from=builder /opt/venv /opt/venv
 
 # 设置环境变量
-ENV PATH="/opt/venv/bin:$PATH" \
-    PYTHONPATH="/app" \
+ENV VIRTUAL_ENV=/opt/venv \
+    PATH="/opt/venv/bin:$PATH" \
+    PYTHONPATH="/app:$PYTHONPATH" \
     PYTHONUNBUFFERED=1 \
     FLASK_ENV=production \
     PYTHONDONTWRITEBYTECODE=1
@@ -61,6 +59,10 @@ COPY --chown=app:app static/ ./static/
 
 # 切换到非root用户
 USER app
+
+# 验证运行时环境
+RUN python -c "import flask; import websockets; import yt_dlp" && \
+    python -c "from flask import Flask; from websockets import serve"
 
 # 暴露端口
 EXPOSE 5000 8765

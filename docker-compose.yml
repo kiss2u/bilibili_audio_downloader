@@ -8,10 +8,11 @@ services:
     volumes:
       - ./downloads:/mnt/shares/audiobooks
     environment:
-      - FLASK_ENV=production
-      - PYTHONUNBUFFERED=1
-      - PYTHONPATH=/app
+      - VIRTUAL_ENV=/opt/venv
       - PATH=/opt/venv/bin:$PATH
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - FLASK_ENV=production
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000"]
