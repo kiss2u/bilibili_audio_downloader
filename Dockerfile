@@ -46,8 +46,9 @@ ENV VIRTUAL_ENV=/opt/venv \
     FLASK_ENV=production \
     PYTHONDONTWRITEBYTECODE=1
 
-# 创建必要的目录
-RUN mkdir -p /mnt/shares/audiobooks static/css && \
+# 创建必要的目录和文件
+RUN mkdir -p /mnt/shares/audiobooks static/css src/models && \
+    touch src/__init__.py src/models/__init__.py && \
     # 创建非root用户
     useradd -m -r -s /bin/bash app && \
     chown -R app:app /app /mnt/shares/audiobooks /opt/venv
@@ -56,10 +57,6 @@ RUN mkdir -p /mnt/shares/audiobooks static/css && \
 COPY --chown=app:app src/ ./src/
 COPY --chown=app:app templates/ ./templates/
 COPY --chown=app:app static/ ./static/
-
-# 创建空的__init__.py文件
-RUN touch src/__init__.py && \
-    touch src/models/__init__.py
 
 # 切换到非root用户
 USER app
