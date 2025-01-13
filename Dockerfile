@@ -28,6 +28,7 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3-minimal \
+    python3-pip \
     ffmpeg \
     curl \
     && rm -rf /var/lib/apt/lists/* && \
