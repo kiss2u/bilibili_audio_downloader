@@ -1,0 +1,15 @@
+[Unit]
+Description=Bilibili Audio Downloader
+After=network.target
+
+[Service]
+Type=simple
+User=your_username
+WorkingDirectory=/path/to/bilibili_audio_downloader
+ExecStart=/bin/bash -c 'source venv/bin/activate && python src/app.py'
+ExecStartPre=/bin/bash -c 'source venv/bin/activate && python src/websocket.py &'
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target 

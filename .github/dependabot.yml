@@ -1,18 +1,21 @@
+# Dependabot配置文件
+# 用于自动更新依赖项
+
 version: 2
 updates:
-  # GitHub Actions
+  # GitHub Actions工作流依赖更新
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "weekly"  # 每周检查更新
 
-  # Docker
+  # Docker依赖更新
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
 
-  # Python
+  # Python包依赖更新
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
