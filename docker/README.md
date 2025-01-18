@@ -1,46 +1,70 @@
-# BiliAudio-Downloader Docker 构建说明
+# BiliAudio Downloader Docker 使用指南
 
-## 先决条件
+## 1. 构建 Docker 镜像
 
-1. 安装 Docker Desktop：
+```bash
+docker build -t bili-audio-downloader .
+```
 
-   - Windows: https://docs.docker.com/desktop/install/windows-install/
-   - macOS: https://docs.docker.com/desktop/install/mac-install/
-   - Linux: https://docs.docker.com/engine/install/
+## 2. 运行容器
 
-2. 启用 Buildx 功能：
-   ```bash
-   docker buildx create --use
-   ```
+```bash
+docker run -d \
+  --name bili-audio-downloader \
+  -p 5000:5000 \
+  -v /path/to/config:/app/config \
+  -v /path/to/downloads:/app/downloads \
+  bili-audio-downloader
+```
 
-## 功能特性
+## 3. 使用 docker-compose
 
-- 支持 x64 和 arm 架构
-- 多阶段构建优化镜像大小
-- 生产环境最佳实践
-- 资源限制和健康检查
+```yaml
+version: "3"
+services:
+  bili-audio:
+    image: bili-audio-downloader
+    container_name: bili-audio-downloader
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./config:/app/config
+      - ./downloads:/app/downloads
+    restart: unless-stopped
+```
 
-## 构建步骤
+## 4. 访问 Web 界面
 
-1. 进入项目目录：
+打开浏览器访问：http://localhost:5000
 
-   ```bash
-   cd BiliAudio-Downloader/docker
-   ```
+## 5. 环境变量配置
 
-2. 构建并推送镜像：
+- `BILI_COOKIE`: B 站登录 cookie
+- `DOWNLOAD_DIR`: 下载目录路径（默认为/app/downloads）
+- `LOG_LEVEL`: 日志级别（默认为 INFO）
 
-   ```bash
-   ./build.sh
-   ```
+## 6. 更新镜像
 
-3. 部署服务：
-   ```bash
-   docker-compose up -d
-   ```
+```bash
+docker pull kiss2u/bilibili_audio_downloader:latest
+docker-compose down
+docker-compose up -d
+```
 
-## 镜像优化
+## 7. 查看日志
 
-- 最终镜像大小：约 200MB
-- 使用非 root 用户运行
-- 自动清理构建缓存
+```bash
+docker logs -f bili-audio-downloader
+```
+
+## 8. 停止容器
+
+```bash
+docker stop bili-audio-downloader
+```
+
+## 9. 删除容器
+
+```bash
+docker rm bili-audio-downloader
+```
