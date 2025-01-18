@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - opt
     tags:
       - "v*"
   pull_request:
