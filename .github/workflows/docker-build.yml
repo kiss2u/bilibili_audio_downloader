@@ -54,6 +54,7 @@ jobs:
           images: ${{ secrets.DOCKER_USERNAME }}/bili-audio-downloader
           tags: |
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=opt,enable=${{ github.ref == 'refs/heads/opt' }}
 
       - name: Build and push multi-platform Docker image
         uses: docker/build-push-action@v5
