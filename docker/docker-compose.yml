@@ -1,22 +1,12 @@
 version: '3.8'
 
 services:
-  web:
-    image: nbzzd6/bili-audio-downloader:opt
+  bili-audio-downloader:
+    build: .
     ports:
       - "5000:5000"
     volumes:
-      - ../audiobooks:/app/audiobooks
+      - ./audiobooks:/app/audiobooks
     environment:
-      - FLASK_ENV=production
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 512M
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
-      interval: 30s
-      timeout: 3s
-      retries: 3
+      - FLASK_ENV=development
     restart: unless-stopped

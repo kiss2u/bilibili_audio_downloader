@@ -24,13 +24,13 @@ def index():
 def check_playlist():
     data = request.get_json()
     bvid = data.get('bvid')
-    logger.info(f"检查播放列表: {bvid}")
+    logger.info(f"检查播放列表：{bvid}")
     try:
         count = downloader.check_playlist(bvid)
-        logger.info(f"播放列表检查完成: {count} 个视频")
+        logger.info(f"播放列表检查完成：{count} 个视频")
         return jsonify({'success': True, 'count': count})
     except Exception as e:
-        logger.error(f"播放列表检查失败: {str(e)}")
+        logger.error(f"播放列表检查失败：{str(e)}")
         return jsonify({'success': False, 'error': str(e)})
 
 @app.route('/download', methods=['GET'])
@@ -43,18 +43,18 @@ def download():
         logger.error("下载请求缺少必要参数")
         return jsonify({'error': '缺少必要参数'}), 400
     
-    logger.info(f"开始下载任务: bvid={bvid}, output_dir={output_dir}, rename={rename}")
+    logger.info(f"开始下载任务：bvid={bvid}, output_dir={output_dir}, rename={rename}")
     
     def generate():
         try:
             for progress in downloader.download(bvid, output_dir, rename):
                 yield f"data: {json.dumps(progress)}\n\n"
         except Exception as e:
-            logger.error(f"下载过程出错: {str(e)}")
+            logger.error(f"下载过程出错：{str(e)}")
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
     
     return Response(generate(), mimetype='text/event-stream')
 
 if __name__ == '__main__':
-    logger.info("启动Web服务器")
-    app.run(debug=True) 
+    logger.info("启动 Web 服务器")
+    app.run(host='0.0.0.0', port=5000, debug=True)

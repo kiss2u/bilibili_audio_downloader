@@ -53,5 +53,27 @@
     "duration": 187.653,
     "uploader": "司马尘",
     "upload_date": "20250113"
+  },
+  "a6c90a7ce069c7b80812daabcaf605c0": {
+    "bvid": "BV1xxUpYNEVd",
+    "p": 1,
+    "title": "【多人有声剧】沉睡的森林 p01 沉睡的森林-01_10",
+    "file_path": "audiobooks\\测试\\【多人有声剧】沉睡的森林 p01 沉睡的森林-01_10.mp3",
+    "download_time": "2025-01-19T10:09:54.573457",
+    "file_size": 139085326,
+    "duration": 5789.082,
+    "uploader": "失算的谋士",
+    "upload_date": "20241118"
+  },
+  "dd06e09e9aaf7b146ddfb924fd41b693": {
+    "bvid": "BV1xxUpYNEVd",
+    "p": 2,
+    "title": "【多人有声剧】沉睡的森林 p02 沉睡的森林-11_20",
+    "file_path": "audiobooks\\测试\\【多人有声剧】沉睡的森林 p02 沉睡的森林-11_20.mp3",
+    "download_time": "2025-01-19T10:11:50.108137",
+    "file_size": 133238923,
+    "duration": 5545.06,
+    "uploader": "失算的谋士",
+    "upload_date": "20241118"
   }
 }

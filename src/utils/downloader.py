@@ -25,8 +25,15 @@ logger = logging.getLogger('BiliDownloader')
 class BiliDownloader:
     def __init__(self):
         self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            'Referer': 'https://www.bilibili.com'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Referer': 'https://www.bilibili.com',
+            'Origin': 'https://www.bilibili.com',
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
         }
         self.base_url = "https://www.bilibili.com/video/"
         self.history_dir = "download_history"
@@ -305,18 +312,16 @@ class BiliDownloader:
         
         ydl_opts = {
             'format': 'bestaudio/best',
+            'outtmpl': os.path.join(base_path, '%(title)s.%(ext)s'),
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
-                'preferredquality': '192',  # 设置音质
+                'preferredquality': '192',
             }],
-            'outtmpl': os.path.join(base_path, '%(title)s.%(ext)s'),
-            'quiet': True,
-            'no_warnings': True,
-            'retries': 3,
-            'headers': self.headers,
-            'extract_flat': False,  # 获取完整信息
-            'writeinfojson': True,  # 保存视频信息
+            'writethumbnail': True,
+            'ignoreerrors': True,
+            'quiet': False,
+            'no_warnings': False,
         }
         
         success_count = 0
@@ -406,12 +411,31 @@ class BiliDownloader:
             except Exception as e:
                 logger.error(f"下载失败：{str(e)}")
                 error_count += 1
+                # 清理失败下载的临时文件
+                try:
+                    if 'basename' in locals():
+                        for ext in ['.mp3', '.m4a', '.webm', '.part', '.ytdl', '.info.json']:
+                            temp_file = f"{basename}{ext}"
+                            if os.path.exists(temp_file):
+                                os.remove(temp_file)
+                                logger.info(f"清理失败下载的临时文件：{os.path.basename(temp_file)}")
+                except Exception as cleanup_error:
+                    logger.error(f"清理临时文件失败：{str(cleanup_error)}")
+                
                 yield {
                     'status': 'error',
                     'message': f'下载失败：{str(e)}',
-                    'progress': (p / count) * 100
+                    'progress': (p / count) * 100,
+                    'retries_left': 5 - error_count
                 }
-                continue
+                
+                # 如果重试次数未用完，等待后重试
+                if error_count < 5:
+                    time.sleep(5 * error_count)  # 重试间隔时间逐渐增加
+                    continue
+                else:
+                    logger.error(f"视频 {p} 下载失败，已达到最大重试次数")
+                    break
         
         end_time = datetime.now()
         duration = end_time - start_time
